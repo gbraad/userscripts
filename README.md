@@ -1,0 +1,2 @@
+# userscripts
+Browser user scripts
