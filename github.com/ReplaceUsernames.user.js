@@ -15,6 +15,7 @@
     const usernameMap = {
         "octocat": "The Octocat",
         "torvalds": "Linus Torvalds",
+        "No Assignees": "[😒] Unamused"
         // Add more mappings here
     };
 
@@ -24,7 +25,18 @@
         elements.forEach(element => {
             const text = element.textContent.trim();
             if (usernameMap[text]) {
-                element.innerHTML = `<b><i>${usernameMap[text]}</i></b>`;
+                const value = usernameMap[text];
+                // Check if the value contains the emoji pattern [emoji]
+                if (value.match(/^\[.*?\]/)) {
+                    // Split the emoji part from the rest of the text
+                    const emojiOnly = value.match(/^\[(.*?)\]/)[1];
+                    const textPart = value.replace(/^\[.*?\]/, '').trim();
+                    // Put emoji outside the formatting
+                    element.innerHTML = `${emojiOnly} <b><i>${textPart}</i></b>`;
+                } else {
+                    // Regular case without emoji
+                    element.innerHTML = `<b><i>${value}</i></b>`;
+                }
             }
         });
     }
