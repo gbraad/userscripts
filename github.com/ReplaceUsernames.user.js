@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Replace GitHub Usernames with Real Names from Gist
+// @name         Replace GitHub Usernames with Real Names
 // @namespace    http://tampermonkey.net/
-// @version      0.2
-// @description  Replace GitHub usernames with real names using data from a private Gist
-// @author       You
+// @version      0.4
+// @description  Replace GitHub usernames with real names
+// @author       Gerard Braad <me@gbraad.nl>
 // @match        https://github.com/*
 // @grant        none
 // ==/UserScript==
@@ -11,30 +11,28 @@
 (function() {
     'use strict';
 
-    // URL of the private Gist containing the username-to-real-name mappings
-    const gistUrl = 'https://gist.githubusercontent.com/YOUR_USERNAME/GIST_ID/raw/FILENAME.json';
+    // Inline username-to-real-name mappings
+    const usernameMap = {
+        "octocat": "The Octocat",
+        "torvalds": "Linus Torvalds",
+        // Add more mappings here
+    };
 
     // Function to replace usernames with real names
-    function replaceUsernames(usernameMap) {
+    function replaceUsernames() {
         const elements = document.querySelectorAll('a, span, div');
         elements.forEach(element => {
             const text = element.textContent.trim();
             if (usernameMap[text]) {
-                element.textContent = usernameMap[text];
+                element.innerHTML = `<b><i>${usernameMap[text]}</i></b>`;
             }
         });
     }
 
-    // Fetch the username-to-real-name mappings from the Gist
-    fetch(gistUrl)
-        .then(response => response.json())
-        .then(usernameMap => {
-            // Run the function on page load
-            replaceUsernames(usernameMap);
+    // Run the function on page load
+    replaceUsernames();
 
-            // Run the function again if the page content changes (e.g., via AJAX)
-            const observer = new MutationObserver(() => replaceUsernames(usernameMap));
-            observer.observe(document.body, { childList: true, subtree: true });
-        })
-        .catch(error => console.error('Error fetching username mappings:', error));
+    // Run the function again if the page content changes (e.g., via AJAX)
+    const observer = new MutationObserver(() => replaceUsernames());
+    observer.observe(document.body, { childList: true, subtree: true });
 })();
